@@ -1,3 +1,6 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 class Fifo{
     private float[] fifo;
@@ -13,7 +16,34 @@ class Fifo{
         this.fifo = new float[size];
     }
 
-    void parse_date(){
+
+    void parse_checkNumber(){
+
+    }   
+
+    void parse_data_Fifo(String filename){
+        int rows = 0;
+        int cols = 0;
+        File input = new File(filename);
+            try (Scanner scanner = new Scanner(input)) {
+                if (scanner.hasNextLine()) {
+                    String[] values = scanner.nextLine().split(" ");
+                    rows = Integer.parseInt(values[0]);
+                    cols = Integer.parseInt(values[1]);
+                    this.size = rows * cols;
+                    this.fifo = new float[size];
+                    for (int i = 0; i < rows; i++) {
+                         if (scanner.hasNextLine()) {
+                            values = scanner.nextLine().split(" ");
+                            for (int j = 0; j < cols; j++) {
+                                fifo[i + j] = Float.parseFloat(values[j]);
+                            }
+                        }
+                    }
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
 
     }
 
@@ -28,16 +58,17 @@ class Fifo{
     public void push(float value){
         if(!isfull()) {
             fifo[In_index] = value;
-            In_index++;
+            In_index = (In_index + 1) % size;
         } else {
             System.out.println("FIFO is full, cannot push " + value);
         }
+    }
 
 
-        public void pop(float value){
+          public float pop(){
             if(!isempty()) {
                 float value = fifo[Out_index];
-                Out_index++;
+                Out_index = (Out_index + 1) % size;
                 if (Out_index == In_index) {
                     Out_index = 0;
                     In_index = 0;
@@ -47,7 +78,6 @@ class Fifo{
                 System.out.println("FIFO is empty, cannot pop");
                 return -1; // or throw an exception
             }
-        }
 
 
     }
